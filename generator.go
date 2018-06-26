@@ -5,8 +5,6 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
-	"github.com/rai-project/micro18-tools/pkg/assets"
-
 	"gonum.org/v1/gonum/stat/distuv"
 )
 
@@ -167,29 +165,6 @@ func (g *Generator) probs(len int) []float64 {
 	return res
 }
 
-func (g *Generator) ModelGenerator(models assets.ModelManifests) <-chan assets.ModelManifest {
-	gen := make(chan assets.ModelManifest, 10)
-	arry := make([]interface{}, len(models))
-	for ii, m := range models {
-		arry[ii] = m
-	}
-
-	at := NewAlias(g.probs(len(arry)), rand.NewSource(0))
-
-	go func() {
-		defer close(gen)
-		for {
-			select {
-			case <-g.done:
-				return
-			default:
-				n := g.Next(at, arry)
-				gen <- n.(assets.ModelManifest)
-			}
-		}
-	}()
-	return gen
-}
 
 func (g *Generator) Wait() {
 	<-g.done
