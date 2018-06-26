@@ -9,6 +9,7 @@ dist: trusty
 sudo: false
 before_install:
   # setup dependency management tool
+  - go get github.com/tools/godep
   - go install github.com/tools/godep
 install:
   - dep ensure
